@@ -210,6 +210,8 @@ func db_insert(docker_name string, docker_id string, docker_create_user string, 
 	_, err = db.NamedExec(`INSERT INTO tbl_docker(docker_name,docker_id,docker_create_user,docker_password,host,bind,docker_volume,docker_info,delete_flag)VALUES (:docker_name,:docker_id,:docker_create_user,:docker_password,:host,:bind,:docker_volume,:docker_info,:delete_flag)`, value)
 }
 
+
+
 func main() {
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("template/*.html")),
