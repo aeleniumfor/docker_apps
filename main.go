@@ -211,6 +211,8 @@ func db_insert(docker_name string, docker_id string, docker_create_user string, 
 }
 
 func main() {
+
+	
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("template/*.html")),
 	}
