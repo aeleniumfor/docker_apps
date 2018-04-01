@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server</title>
+{{/*<link rel="stylesheet" type="text/css" href="Semantic-UI/dist/semantic.min.css">*/}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
+
+    <script
+            src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
+    <script src="Semantic-UI/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+
+
+</head>
+
+
+<body>
+<div id="header" class="ui container">
+{{template "menu"}}
+    <form class="ui form" action="/post_new" method="post">
+        <div class="field">
+            <label>Docker name</label>
+            <input type="text" name="name" placeholder="First Name">
+        </div>
+        <div class="field">
+            <label>Docker_password</label>
+            <input type="text" name="password" placeholder="Last Name">
+        </div>
+        <div class="field">
+            <label>Host</label>
+            <input type="text" name="host" placeholder="Last Name">
+        </div>
+
+        <div class="field">
+            <label>Bind</label>
+            <input type="text" name="bind" placeholder="Last Name">
+        </div>
+        <div class="field">
+            <label>Short Text</label>
+            <textarea rows="2" name="info"></textarea>
+        </div>
+        <button class="ui button" type="submit">Submit</button>
+    </form>
+</div>
+<script>
+
+    // $('.ui.form')
+    //         .form({
+    //             Name: {
+    //                 identifier: 'name',
+    //                 rules: [
+    //                     {
+    //                         type: 'empty',
+    //                         prompt: 'Please enter your first name'
+    //                     }
+    //                 ]
+    //             },
+    //             Password: {
+    //                 identifier: 'password',
+    //                 rules: [
+    //                     {
+    //                         type: 'empty',
+    //                         prompt: 'Please enter your last name'
+    //                     }
+    //                 ]
+    //             }
+    //         });
+</script>
+
+</body>
+</html>

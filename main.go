@@ -1,4 +1,5 @@
 package main
+
 import (
 	"github.com/moby/moby/client"
 	"github.com/docker/go-connections/nat"
@@ -97,7 +98,7 @@ func docker_list() {
 	cl.Close()
 }
 
-func docker_run(host nat.Port, bind nat.Port) (string) {
+func docker_run(host nat.Port, bind string) (string) {
 	ctx := context.Background()
 
 	//server gave HTTP response to HTTPS client goroutineへの対処
@@ -118,7 +119,7 @@ func docker_run(host nat.Port, bind nat.Port) (string) {
 	portbind := nat.PortMap{
 		host: []nat.PortBinding{
 			{
-				HostPort: "8080",
+				HostPort: bind,
 			},
 		},
 	}
@@ -210,16 +211,13 @@ func db_insert(docker_name string, docker_id string, docker_create_user string, 
 	_, err = db.NamedExec(`INSERT INTO tbl_docker(docker_name,docker_id,docker_create_user,docker_password,host,bind,docker_volume,docker_info,delete_flag)VALUES (:docker_name,:docker_id,:docker_create_user,:docker_password,:host,:bind,:docker_volume,:docker_info,:delete_flag)`, value)
 }
 
-
-
 func main() {
 
-	
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("template/*.html")),
 	}
 
-	fmt.Println(docker_run(nat.Port("80/tcp"),nat.Port("80")))
+	//fmt.Println(docker_run(nat.Port("80/tcp"),"8080"))
 
 	e := echo.New()
 	e.Static("/static", "assets")
@@ -244,11 +242,21 @@ func main() {
 
 	}).Name = "list"
 
-	e.POST("/new", func(i echo.Context) error {
+	//テンプレートを返すだけ
+	e.GET("/get_new", func(i echo.Context) error {
+		return i.Render(http.StatusOK, "new.html", map[string]interface{}{
+			"name": "Dolly!",
+			//"docker": item,
+		})
+	}).Name = "get_new"
+
+	//新しく作るとき
+	e.POST("/post_new", func(i echo.Context) error {
 		//docker_run("80/tcp", "")
-		fmt.Println(i.Request())
-		return i.JSON(http.StatusOK, "ok")
-	}).Name = "info"
+		fmt.Println(i.Request().FormValue("host"))
+
+		return i.Redirect(http.StatusMovedPermanently, "/get_new")
+	}).Name = "post_new"
 
 	// サーバー起動
 	e.Start(":80")
