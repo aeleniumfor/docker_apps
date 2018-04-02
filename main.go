@@ -192,20 +192,21 @@ func db() []Item {
 
 func db_insert(docker_name string, docker_id string, docker_create_user string, docker_password string, host string, bind string, docker_volume string, docker_info string, delete_flag int) {
 
+	delete_flag = 0;
 	db, err := sqlx.Connect("mysql", "root:root@(localhost:3306)/go_docker")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	value := map[string]interface{}{
 		"docker_name":        docker_name,
-		"docker_id":          "Smuth",
-		"docker_create_user": "bensmith@allblacks.nz",
-		"docker_password":    "bensmith@allblacks.nz",
-		"host":               "bensmith@allblacks.nz",
-		"bind":               "bensmith@allblacks.nz",
-		"docker_volume":      "bensmith@allblacks.nz",
-		"docker_info":        "bensmith@allblacks.nz",
-		"delete_flag":        1,
+		"docker_id":          docker_id,
+		"docker_create_user": docker_create_user,
+		"docker_password":    docker_password,
+		"host":               host,
+		"bind":               bind,
+		"docker_volume":      docker_volume,
+		"docker_info":        docker_info,
+		"delete_flag":        0,
 	}
 
 	_, err = db.NamedExec(`INSERT INTO tbl_docker(docker_name,docker_id,docker_create_user,docker_password,host,bind,docker_volume,docker_info,delete_flag)VALUES (:docker_name,:docker_id,:docker_create_user,:docker_password,:host,:bind,:docker_volume,:docker_info,:delete_flag)`, value)
@@ -253,7 +254,13 @@ func main() {
 	//新しく作るとき
 	e.POST("/post_new", func(i echo.Context) error {
 		//docker_run("80/tcp", "")
+		fmt.Println(i.Request().FormValue("name"))
+		fmt.Println(i.Request().FormValue("password"))
+		fmt.Println(i.Request().FormValue("ip"))
 		fmt.Println(i.Request().FormValue("host"))
+		fmt.Println(i.Request().FormValue("bind"))
+		fmt.Println(i.Request().FormValue("info"))
+
 
 		return i.Redirect(http.StatusMovedPermanently, "/get_new")
 	}).Name = "post_new"
