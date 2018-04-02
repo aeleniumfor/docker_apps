@@ -15,13 +15,14 @@ import (
 
 	"html/template"
 	"fmt"
-	"time"
+	//"time"
 	"context"
 	"io"
 	"net/http"
 	//"reflect"
 	"log"
 	"database/sql"
+	"time"
 )
 
 /*dokcer関連*/
@@ -146,6 +147,16 @@ func docker_run(host nat.Port, bind string) (string) {
 	cl.Close()
 	return resp.ID
 }
+func docker_stop(docker_id string) {
+	sttime, _ := time.ParseDuration("60s")
+	ctx := context.Background()
+
+	//server gave HTTP response to HTTPS client goroutineへの対処
+	tr := &http.Transport{}
+	cl, _ := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: tr}, map[string]string{})
+	fmt.Println(cl.ContainerStop(ctx, docker_id, &sttime))
+
+}
 
 /*テンプレートエンジン関連*/
 type TemplateRenderer struct {
@@ -233,6 +244,7 @@ func db_insert(docker_name string, docker_id string, docker_create_user string, 
 
 func main() {
 
+	docker_stop("94fceeaaaa3d")
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("template/*.html")),
 	}
@@ -305,6 +317,10 @@ func main() {
 
 		return i.Redirect(http.StatusMovedPermanently, "/get_new")
 	}).Name = "post_new"
+
+	e.GET("/teapot", func(i echo.Context) error {
+		return i.String(http.StatusTeapot, "418. I’m a teapot.")
+	}).Name = "teapot"
 
 	// サーバー起動
 	e.Start(":80")
