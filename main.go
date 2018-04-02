@@ -130,6 +130,7 @@ func docker_run(host nat.Port, bind string) (string) {
 	}
 
 	host_conf := &container.HostConfig{
+
 		AutoRemove:   true,
 		PortBindings: portbind,
 	}
@@ -174,6 +175,24 @@ type Item struct {
 	Create_time        sql.NullString
 	Update_time        sql.NullString
 	Delete_flag        int
+}
+
+type Set struct {
+	Docler_id       string
+	Docker_name     string
+	Docker_password string
+	Host            string
+	Bind            string
+	//Docker_volume   string
+	Docker_info string
+}
+
+func validation(set Set) bool {
+	if set.Docker_name == "" || set.Host == "" || set.Bind == "" {
+		return false
+	} else {
+		return true
+	}
 }
 
 //Sql関連
@@ -254,13 +273,35 @@ func main() {
 	//新しく作るとき
 	e.POST("/post_new", func(i echo.Context) error {
 		//docker_run("80/tcp", "")
-		fmt.Println(i.Request().FormValue("name"))
-		fmt.Println(i.Request().FormValue("password"))
-		fmt.Println(i.Request().FormValue("ip"))
-		fmt.Println(i.Request().FormValue("host"))
-		fmt.Println(i.Request().FormValue("bind"))
-		fmt.Println(i.Request().FormValue("info"))
+		var docker_name string = i.Request().FormValue("name")
+		var docker_password string = i.Request().FormValue("password")
+		//var ip = i.Request().FormValue("ip")
+		var host string = i.Request().FormValue("host")
+		var bind string = i.Request().FormValue("bind")
+		var info string = i.Request().FormValue("info")
 
+		//構造体のセット
+		set := Set{}
+		set.Docker_name = docker_name
+		set.Docker_password = docker_password
+		set.Host = host
+		set.Bind = bind
+		set.Docker_info = info
+		//確認用の関数
+		if validation(set) {
+			set.Docler_id = docker_run(nat.Port(set.Host), set.Bind)
+			db_insert(
+				set.Docker_name,
+				set.Docler_id,
+				"",
+				set.Docker_password,
+				set.Host,
+				set.Bind,
+				"",
+				set.Docker_info,
+				0,
+			)
+		}
 
 		return i.Redirect(http.StatusMovedPermanently, "/get_new")
 	}).Name = "post_new"
