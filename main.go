@@ -337,7 +337,7 @@ func main() {
 		db_del(id)
 		fmt.Println(id)
 
-		return i.Redirect(http.StatusOK, "/index")
+		return i.Redirect(http.StatusMovedPermanently, "/index")
 	}).Name = "delete"
 
 	e.GET("/teapot", func(i echo.Context) error {
