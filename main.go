@@ -25,78 +25,78 @@ import (
 )
 
 /*dokcer関連*/
-func docker() {
-	ctx := context.Background()
-	cl, err := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: http.DefaultTransport}, map[string]string{})
-	//cl, err := client.NewEnvClient()
+//func docker() {
+//	ctx := context.Background()
+//	cl, err := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: http.DefaultTransport}, map[string]string{})
+//	//cl, err := client.NewEnvClient()
+//
+//	fmt.Println(err)
+//	fmt.Println(cl.ClientVersion())
+//	list, err := cl.ImageList(ctx, types.ImageListOptions{All: true})
+//	if err != nil {
+//		panic(err)
+//	}
+//	for _, image := range list {
+//		fmt.Println(image.RepoTags)
+//	}
+//
+//	export := nat.PortSet{"25565/tcp": struct{}{}}
+//	portbind := nat.PortMap{
+//		"25565/tcp": []nat.PortBinding{
+//			{
+//				HostPort: "25565",
+//			},
+//		},
+//	}
+//
+//	conf := &container.Config{
+//		Image:        "sasenomura/test",
+//		ExposedPorts: export,
+//	}
+//
+//	host_conf := &container.HostConfig{
+//		AutoRemove:   true,
+//		PortBindings: portbind,
+//	}
+//
+//	net_conf := &network.NetworkingConfig{
+//	}
+//
+//	resp, err := cl.ContainerCreate(ctx, conf, host_conf, net_conf, "")
+//	if err := cl.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+//		panic(err)
+//	}
+//
+//	time.Sleep(60 * time.Second)
+//	cl.ContainerStop(ctx, resp.ID, nil)
+//	cl.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{
+//		Force: true,
+//	})
+//
+//}
 
-	fmt.Println(err)
-	fmt.Println(cl.ClientVersion())
-	list, err := cl.ImageList(ctx, types.ImageListOptions{All: true})
-	if err != nil {
-		panic(err)
-	}
-	for _, image := range list {
-		fmt.Println(image.RepoTags)
-	}
-
-	export := nat.PortSet{"25565/tcp": struct{}{}}
-	portbind := nat.PortMap{
-		"25565/tcp": []nat.PortBinding{
-			{
-				HostPort: "25565",
-			},
-		},
-	}
-
-	conf := &container.Config{
-		Image:        "sasenomura/test",
-		ExposedPorts: export,
-	}
-
-	host_conf := &container.HostConfig{
-		AutoRemove:   true,
-		PortBindings: portbind,
-	}
-
-	net_conf := &network.NetworkingConfig{
-	}
-
-	resp, err := cl.ContainerCreate(ctx, conf, host_conf, net_conf, "")
-	if err := cl.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		panic(err)
-	}
-
-	time.Sleep(60 * time.Second)
-	cl.ContainerStop(ctx, resp.ID, nil)
-	cl.ContainerRemove(ctx, resp.ID, types.ContainerRemoveOptions{
-		Force: true,
-	})
-
-}
-
-func docker_list() {
-	ctx := context.Background()
-
-	//server gave HTTP response to HTTPS client goroutineへの対処
-	tr := &http.Transport{}
-	cl, err := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: tr}, map[string]string{})
-
-	//fmt.Println(err)
-	//fmt.Println(cl.ClientVersion())
-
-	list, err := cl.ImageList(ctx, types.ImageListOptions{All: true})
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(list)
-	for _, image := range list {
-		fmt.Println(image.RepoTags)
-	}
-
-	cl.Close()
-}
+//func docker_list() {
+//	ctx := context.Background()
+//
+//	//server gave HTTP response to HTTPS client goroutineへの対処
+//	tr := &http.Transport{}
+//	cl, err := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: tr}, map[string]string{})
+//
+//	//fmt.Println(err)
+//	//fmt.Println(cl.ClientVersion())
+//
+//	list, err := cl.ImageList(ctx, types.ImageListOptions{All: true})
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	fmt.Println(list)
+//	for _, image := range list {
+//		fmt.Println(image.RepoTags)
+//	}
+//
+//	cl.Close()
+//}
 
 func docker_run(host nat.Port, bind string) (string) {
 	ctx := context.Background()
