@@ -147,7 +147,7 @@ func docker_run(host nat.Port, bind string) (string) {
 	cl.Close()
 	return resp.ID
 }
-func docker_stop(docker_id string) {
+func docker_del(docker_id string) {
 	sttime, _ := time.ParseDuration("60s")
 	ctx := context.Background()
 
@@ -155,6 +155,11 @@ func docker_stop(docker_id string) {
 	tr := &http.Transport{}
 	cl, _ := client.NewClient("http://192.168.111.146:2375", client.DefaultVersion, &http.Client{Transport: tr}, map[string]string{})
 	fmt.Println(cl.ContainerStop(ctx, docker_id, &sttime))
+
+	remove_conf := types.ContainerRemoveOptions{
+		Force: true,
+	}
+	cl.ContainerRemove(ctx, docker_id, remove_conf)
 
 }
 
@@ -241,10 +246,18 @@ func db_insert(docker_name string, docker_id string, docker_create_user string, 
 
 	_, err = db.NamedExec(`INSERT INTO tbl_docker(docker_name,docker_id,docker_create_user,docker_password,host,bind,docker_volume,docker_info,delete_flag)VALUES (:docker_name,:docker_id,:docker_create_user,:docker_password,:host,:bind,:docker_volume,:docker_info,:delete_flag)`, value)
 }
+func db_del(docker_id string) {
+	db, err := sqlx.Connect("mysql", "root:root@(localhost:3306)/go_docker")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	id := map[string]interface{}{"docker_id": docker_id}
+	_, err = db.NamedExec("DELETE FROM tbl_docker WHERE docker_id = :docker_id", id)
+}
 
 func main() {
 
-	docker_stop("94fceeaaaa3d")
+	//docker_stop("94fceeaaaa3d")
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("template/*.html")),
 	}
@@ -317,6 +330,15 @@ func main() {
 
 		return i.Redirect(http.StatusMovedPermanently, "/get_new")
 	}).Name = "post_new"
+
+	e.GET("/delete/:docker_id", func(i echo.Context) error {
+		var id string = i.Param("docker_id")
+		docker_del(id)
+		db_del(id)
+		fmt.Println(id)
+
+		return i.Redirect(http.StatusOK, "/index")
+	}).Name = "delete"
 
 	e.GET("/teapot", func(i echo.Context) error {
 		return i.String(http.StatusTeapot, "418. I’m a teapot.")

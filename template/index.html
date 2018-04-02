@@ -94,6 +94,33 @@
 
     var info = [];
 
+    function del(Id) {
+        if (info.length === 0) {
+            return;
+        } else {
+            var items = info;
+        }
+
+        var result = items.filter(function (value) {
+            return value.Id === Id;
+        });
+        //配列にする
+        result = result[0];
+        console.log("/delete/" + result.Docker_id.String);
+
+        $.ajax({
+            type: 'GET',
+            url: "/delete/" + result.Docker_id.String,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log(data);
+                location.reload();
+            }
+        });
+    }
+
     function btn(Id) {
         //このエラーをとりあえず放置
         if (info.length === 0) {
@@ -122,6 +149,9 @@
         $(".ui.modal").modal('show');
     }
 
+    function call_del(url) {
+    }
+
 
     function ListGet(url) {
         $.ajax({
@@ -134,7 +164,7 @@
                 info = data;
                 console.log(data);
                 for (var i = 0; i < data.length; i++) {
-                    var html = '<div class="card"><div class="image"><img src="/static/image/docker.png"></div><div class="content"><div class="header">' + data[i].Docker_name.String + '</div><div class="meta"><a target="_blank" href="' + "http://192.168.111.146:" + data[i].Host.String + '">192.168.111.146:' + data[i].Host.String + '</a></div><div class="description">' + data[i].Docker_info.String + '</div></div><div class="extra content"><span class="right floated"><button class="ui inverted red button">Delet</button></span><span><button id="config" class="ui inverted blue button" onclick="btn(' + data[i].Id + ')">Config</button></span></div></div>';
+                    var html = '<div class="card"><div class="image"><img src="/static/image/docker.png"></div><div class="content"><div class="header">' + data[i].Docker_name.String + '</div><div class="meta"><a target="_blank" href="' + "http://192.168.111.146:" + data[i].Host.String + '">192.168.111.146:' + data[i].Host.String + '</a></div><div class="description">' + data[i].Docker_info.String + '</div></div><div class="extra content"><span class="right floated"><button class="ui inverted red button"><a href="/delete/' + data[i].Docker_id.String + '">Delet</a></button></span><span><button id="config" class="ui inverted blue button" onclick="btn(' + data[i].Id + ')">Config</button></span></div></div>';
 
                     $('#container').append(html);
                 }
@@ -144,7 +174,8 @@
 
     $(function () {
         ListGet("/list")
-    });
+    })
+
 </script>
 </body>
 </html>
